@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách sản phẩm đề xuất</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f8f8f8;
+    }
+
+    .navbar {
+      background-color: #2c3e50;
+      color: white;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .navbar .user-info {
+      font-size: 14px;
+    }
+
+    .container {
+      width: 85%;
+      margin: 12px auto;
+      background-color: white;
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    }
+
+    /* Thanh tìm kiếm */
+    .search-bar {
+      width: 80%;
+      margin: 0 auto 15px auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 250px;
+      font-size: 14px;
+    }
+
+    table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f2f2f2;
+    }
+
+    th:nth-child(1), td:nth-child(1) {
+      width: 10%;
+      text-align: center;
+    }
+    th:nth-child(2), td:nth-child(2) {
+      width: 45%;
+    }
+    th:nth-child(3), td:nth-child(3) {
+      width: 25%;
+      text-align: right;
+    }
+    th:nth-child(4), td:nth-child(4) {
+      width: 20%;
+      text-align: center;
+    }
+
+    a.button {
+      background-color: #3498db;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    a.button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Nút xem đề xuất */
+    .bottom-button {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+    }
+
+    .bottom-button a {
+      background-color: #27ae60;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .bottom-button a:hover {
+      background-color: #1e8449;
+    }
+    /* New styles for layout similar to mock */
+    .page-header h1 {
+      text-align: center;
+      margin: 18px 0 6px 0;
+      font-size: 28px;
+    }
+    .top-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 85%;
+      margin: 0 auto 10px auto;
+    }
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .right-column { min-width: 120px; }
+    .search-area {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .search-area input[type="text"] {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 260px;
+      font-size: 13px;
+    }
+    #searchBtn {
+      padding: 4px 8px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .left-actions {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .view-button {
+      background-color: #27ae60;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .view-button:hover { background-color: #1e8449; }
+
+    /* Table centered and narrower like mock */
+    table {
+      width: 70%;
+      margin: 6px auto;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+    /* Wrapper to allow scrolling when list is long (approx 8 rows) */
+    .table-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center; /* keep table centered */
+      margin-top: 4px;
+    }
+    .table-wrapper table {
+      width: 70%;
+    }
+  </style>
+</head>
+<body>
+<!-- Thanh điều hướng -->
+<div class="navbar">
+  <div class="logo">Trang đề xuất sản phẩm</div>
+  <div class="user-info">
+    Xin chào, <span th:text="${user.username}">Người dùng</span> |
+    <span th:text="${user.email}">email@example.com</span>
+  </div>
+</div>
+<!-- Nội dung chính -->
+<div class="container">
+  <!-- Top controls: search left, 'Xem đề xuất' button below it -->
+  <div class="top-controls">
+    <div class="left-column">
+      <div class="search-area">
+        <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+        <button id="searchBtn">Tìm kiếm</button>
+      </div>
+
+      <div class="left-actions">
+        <a th:href="@{/recommend-list}" class="view-button">Xem đề xuất</a>
+      </div>
+    </div>
+
+    <div class="right-column"><!-- reserved for future controls --></div>
+  </div>
+
+  <h2 style="text-align:center;margin-top:4px;margin-bottom:6px;">Danh sách đề xuất</h2>
+
+  <div class="table-wrapper">
+    <table id="productTable">
+    <thead>
+    <tr>
+      <th>STT</th>
+      <th>Tên sản phẩm</th>
+      <th>Giá thành</th>
+      <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="p, i : ${products}">
+      <td th:text="${i.index + 1}"></td>
+      <td th:text="${p.name}"></td>
+      <td th:text="${#numbers.formatDecimal(p.price * 1000, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+      <td>
+        <a th:href="@{'/product/' + ${p.id}}" class="button">Xem chi tiết</a>
+      </td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+
+
+</div>
+
+
+</body>
+</html>
