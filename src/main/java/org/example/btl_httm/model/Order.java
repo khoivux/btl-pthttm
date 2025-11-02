@@ -1,24 +1,17 @@
 package org.example.btl_httm.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private int id;
     private float totalPrice;
     private Date createdTime;
     private User user;
-    private OrderDetail[] orderDetails;
+    private List<OrderDetail> orderDetailList;
 
     public Order(){
 
-    }
-
-    public Order(int id, float totalPrice, Date createdTime, User user, OrderDetail[] orderDetails) {
-        this.id = id;
-        this.totalPrice = totalPrice;
-        this.createdTime = createdTime;
-        this.user = user;
-        this.orderDetails = orderDetails;
     }
 
     public int getId() {
@@ -53,11 +46,11 @@ public class Order {
         this.user = user;
     }
 
-    public OrderDetail[] getOrderDetails() {
-        return orderDetails;
+    public List<OrderDetail> getOrderDetailList() {
+        return orderDetailList;
     }
 
-    public void setOrderDetails(OrderDetail[] orderDetails) {
-        this.orderDetails = orderDetails;
+    public void setOrderDetailList(List<OrderDetail> orderDetailList) {
+        this.orderDetailList = orderDetailList;
     }
 }

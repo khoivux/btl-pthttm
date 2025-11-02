@@ -33,7 +33,6 @@ public class UserDAO extends DAO{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 

@@ -57,7 +57,6 @@ public class ProductDAO extends DAO{
         return results;
     }
     public Product getById(int id) {
-        Product p = null;
 
         String sql = "SELECT id, brand, name, price, des, quantity FROM tblProduct WHERE id = ?";
 
@@ -67,19 +66,20 @@ public class ProductDAO extends DAO{
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                p = new Product();
+                Product p = new Product();
                 p.setId(rs.getInt("id"));
                 p.setBrand(rs.getString("brand"));
                 p.setName(rs.getString("name"));
                 p.setPrice(rs.getFloat("price"));
                 p.setDes(rs.getString("des"));
                 p.setQuantity(rs.getInt("quantity"));
+                return p;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return p;
+        return null;
     }
 
 }

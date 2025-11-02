@@ -29,7 +29,7 @@ public class OrderDAO extends DAO{
             if(rs.next()) {
                 int orderId = rs.getInt(1);
 
-                for (OrderDetail detail : order.getOrderDetails()) {
+                for (OrderDetail detail : order.getOrderDetailList()) {
                     PreparedStatement psDetail = con.prepareStatement(sqlInsertOrderDetail);
                     psDetail.setInt(1, orderId);
                     psDetail.setInt(2, detail.getProduct().getId());

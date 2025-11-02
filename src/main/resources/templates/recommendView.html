@@ -197,17 +197,19 @@
   </style>
 </head>
 <body>
-<!-- Thanh điều hướng -->
 <div class="navbar">
-  <div class="logo">Trang đề xuất sản phẩm</div>
+  <div class="logo">
+    <a href="/recommend-list" style="color:white; text-decoration:none;">Trang chủ</a>
+  </div>
   <div class="user-info">
-    Xin chào, <span th:text="${user.username}">Người dùng</span> |
-    <span th:text="${user.email}">email@example.com</span>
+    Xin chào, <span th:text="${user.username}"></span> |
+    <a href="/cart" style="color:white; text-decoration:underline;">Giỏ hàng</a>
+    <a href="/logout" style="color:white; text-decoration:underline;">Đăng xuất</a>
   </div>
 </div>
-<!-- Nội dung chính -->
+
 <div class="container">
-  <!-- Top controls: search left, 'Xem đề xuất' button below it -->
+
   <div class="top-controls">
     <div class="left-column">
       <div class="search-area">

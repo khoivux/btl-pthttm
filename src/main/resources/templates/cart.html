@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng của bạn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f8f8f8;
+        }
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar .logo {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .navbar .user-info {
+            font-size: 14px;
+        }
+        .container {
+            width: 80%;
+            margin: 40px auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+        table th {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+        }
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">
+        <a href="/recommend-list" style="color:white; text-decoration:none;">Trang chủ</a>
+    </div>
+    <div class="user-info">
+        Xin chào, <span th:text="${user.username}"></span> |
+        <a href="/cart" style="color:white; text-decoration:underline;">Giỏ hàng</a>
+        <a href="/logout" style="color:white; text-decoration:underline;">Đăng xuất</a>
+    </div>
+</div>
+
+
+<div class="container">
+    <h2>Giỏ hàng của bạn</h2>
+
+    <div th:if="${cart == null or #lists.isEmpty(cart.cartDetailList)}">
+        <p>Giỏ hàng của bạn hiện đang trống.</p>
+    </div>
+
+    <div th:if="${cart != null and !#lists.isEmpty(cart.cartDetailList)}">
+
+        <form th:action="@{/cart/remove}" method="post" id="cartActionForm">
+            <table>
+                <thead>
+                <tr>
+                    <th>Chọn</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail : ${cart.cartDetailList}">
+                    <td>
+                        <input type="checkbox" name ="selectedItems"
+                               th:value="${detail.id}">
+                    </td>
+                    <td th:text="${detail.product.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(detail.product.price * 1000, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                    <td th:text="${detail.quantity}"></td>
+                    <td th:text="${#numbers.formatDecimal(detail.totalPrice * 1000, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="btn-group">
+                <button type="submit" id="deleteSelected" class="delete-btn">Xóa các sản phẩm đã chọn</button>
+                <button type="button" id="checkoutButton">Mua hàng</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<p id="message" th:text="${message}" hidden></p>
+
+<script>
+    const msg = document.getElementById("message").innerText;
+    if (msg) alert(msg);
+
+    document.getElementById('deleteSelected').addEventListener('click', function (e) {
+        const checked = document.querySelectorAll('input[name="selectedItems"]:checked');
+        if (checked.length === 0) {
+            alert("Vui lòng chọn ít nhất một sản phẩm để xóa!");
+            e.preventDefault();
+            return;
+        }
+        const confirmDelete = confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?");
+        if (!confirmDelete) e.preventDefault();
+    });
+
+
+    document.getElementById('checkoutButton').addEventListener('click', function () {
+        const form = document.getElementById('cartActionForm');
+        const checked = document.querySelectorAll('input[name="selectedItems"]:checked');
+        if (checked.length === 0) {
+            alert("Vui lòng chọn ít nhất một sản phẩm để mua!");
+            return;
+        }
+        form.action = "/cart/checkout";
+        form.submit();
+    });
+</script>
+
+</body>
+</html>
