@@ -46,6 +46,17 @@ public class ServerController {
         return "recommendView";
     }
 
+    @GetMapping("/product")
+    public String searchProduct(HttpSession session, Model model,
+                                @RequestParam(value = "keyword", required = false) String keyword) {
+        ProductDAO productDAO = new ProductDAO();
+        List<Product> productList = productDAO.getByName(keyword);
+        User user = (User) session.getAttribute("user");
+        model.addAttribute("products", productList);
+        model.addAttribute("user", user);
+        return "searchResultView";
+    }
+
     @GetMapping("/product/{id}")
     public String showProductDetail(HttpSession session, Model model, @PathVariable("id") int productId) {
         ProductDAO productDAO = new ProductDAO();
@@ -135,7 +146,11 @@ public class ServerController {
             return "redirect:/login";
         }
         CartDetailDAO cartDetailDAO = new CartDetailDAO();
+        List<CartDetail> selectedDetailList = cartDetailDAO.getByIdList(selectedItemIds);
         cartDetailDAO.deleteCartDetail(selectedItemIds);
+        for (CartDetail cd : selectedDetailList) {
+            sendLog(user.getId(), cd.getProduct().getId(), "remove_from_cart");
+        }
 
         return "redirect:/cart";
     }
@@ -179,16 +194,16 @@ public class ServerController {
 
     private void sendLog(int userId, int productId, String actionType) {
         try {
-            String ipServerML = "26.155.72.159"; // ip máy Kiên
-            RestTemplate restTemplate = new RestTemplate();
-            String apiUrl = "http://" + ipServerML + ":5000/api/samples";
-
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("userId", userId);
-            requestBody.put("productId", productId);
-            requestBody.put("actionType", actionType);
-
-            restTemplate.postForObject(apiUrl, requestBody, Void.class);
+//            String ipServerML = "26.155.72.159"; // ip máy Kiên
+//            RestTemplate restTemplate = new RestTemplate();
+//            String apiUrl = "http://" + ipServerML + ":5000/api/samples";
+//
+//            Map<String, Object> requestBody = new HashMap<>();
+//            requestBody.put("userId", userId);
+//            requestBody.put("productId", productId);
+//            requestBody.put("actionType", actionType);
+//
+//            restTemplate.postForObject(apiUrl, requestBody, Void.class);
             System.out.println("GỬI LOG CHO SERVER ML: " + "userId: " + userId + ", productId: " + productId + ", actionType: " + actionType);
         } catch (Exception e) {
             System.out.println("Gửi log thất bại: " + e.getMessage());

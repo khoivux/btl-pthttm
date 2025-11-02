@@ -4,21 +4,14 @@ public class RegisterDTO {
     private String username;
     private String fullname;
     private String email;
-    private String phonenumber;
+    private String phoneNumber;
     private String password;
     private String confirmPassword;
 
     public RegisterDTO() {
     }
 
-    public RegisterDTO(String username, String fullname, String email, String phonenumber, String password, String confirmPassword) {
-        this.username = username;
-        this.fullname = fullname;
-        this.email = email;
-        this.phonenumber = phonenumber;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-    }
+
 
     public String getUsername() {
         return username;
@@ -44,12 +37,12 @@ public class RegisterDTO {
         this.email = email;
     }
 
-    public String getPhonenumber() {
-        return phonenumber;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPassword() {

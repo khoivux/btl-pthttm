@@ -82,4 +82,30 @@ public class ProductDAO extends DAO{
         return null;
     }
 
+    public List<Product> getByName(String keyword) {
+        List<Product> results = new ArrayList<>();
+        String sql = "SELECT id, brand, name, price, des, quantity FROM tblProduct WHERE name LIKE ?";
+
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Product p = new Product();
+                p.setId(rs.getInt("id"));
+                p.setBrand(rs.getString("brand"));
+                p.setName(rs.getString("name"));
+                p.setPrice(rs.getFloat("price"));
+                p.setDes(rs.getString("des"));
+                p.setQuantity(rs.getInt("quantity"));
+                results.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
 }

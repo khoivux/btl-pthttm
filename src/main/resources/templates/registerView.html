@@ -90,7 +90,7 @@
     <div th:if="${error}" class="error" th:text="${error}"></div>
     <div th:if="${message}" class="message" th:text="${message}"></div>
 
-    <form th:action="@{/register}" method="post" th:object="${registerDTO}">
+    <form th:action="@{/register}" method="post" th:object="${registerInfo}">
         <label for="username">Tên đăng nhập</label>
         <input type="text" id="username" th:field="*{username}" required>
 
@@ -100,8 +100,8 @@
         <label for="email">Email</label>
         <input type="email" id="email" th:field="*{email}" required>
 
-        <label for="phonenumber">Số điện thoại</label>
-        <input type="text" id="phonenumber" th:field="*{phonenumber}" required>
+        <label for="phoneNumber">Số điện thoại</label>
+        <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required>
 
         <label for="password">Mật khẩu</label>
         <input type="password" id="password" th:field="*{password}" required>
@@ -109,6 +109,7 @@
         <label for="confirmPassword">Xác nhận mật khẩu</label>
         <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
 
+        <div class="error-message" th:if="${error}" th:text="${error}"></div>
         <button type="submit" class="btn">Đăng ký</button>
 
         <div class="link">

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm đề xuất</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; background:#f8f8f8; }
+        .navbar { background:#2c3e50; color:white; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; }
+        .navbar a { color:white; text-decoration:none; margin-left:6px; }
+        .container { width:85%; margin:12px auto; background:white; padding:12px; border-radius:8px; box-shadow:0 0 6px rgba(0,0,0,0.08); }
+
+        .search-area { display:flex; gap:4px; margin-bottom:10px; }
+        .search-area input { padding:6px 10px; border:1px solid #ccc; border-radius:4px; width:260px; font-size:13px; }
+        #searchBtn { padding:4px 8px; background:#3498db; color:white; border:none; border-radius:4px; cursor:pointer; }
+
+        .view-button { background:#27ae60; color:white; padding:8px 12px; border-radius:6px; text-decoration:none; font-weight:bold; }
+        .view-button:hover { background:#1e8449; }
+
+        h2 { text-align:center; margin:4px 0 6px 0; }
+
+        .table-wrapper { width:100%; display:flex; justify-content:center; max-height:400px; overflow-y:auto; }
+        table { width:70%; border-collapse:collapse; }
+        th, td { border:1px solid #ddd; padding:6px 8px; }
+        th { background:#3498db; color:white; position:sticky; top:0; }
+        tr:hover { background:#f2f2f2; }
+
+        th:nth-child(1), td:nth-child(1) { width:10%; text-align:center; }
+        th:nth-child(2), td:nth-child(2) { width:45%; }
+        th:nth-child(3), td:nth-child(3) { width:25%; text-align:right; }
+        th:nth-child(4), td:nth-child(4) { width:20%; text-align:center; }
+
+        a.button { background:#3498db; color:white; padding:6px 12px; border-radius:4px; text-decoration:none; }
+        a.button:hover { background:#2980b9; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo"><a href="/recommend-list">Trang chủ</a></div>
+    <div class="user-info">
+        Xin chào, <span th:text="${user.username}"></span> |
+        <a href="/cart">Giỏ hàng</a>
+        <a href="/logout">Đăng xuất</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="search-area">
+        <form action="/product" method="get">
+            <input type="text" id="searchInput" name="keyword" placeholder="Tìm kiếm sản phẩm...">
+            <button type="submit" id="searchBtn">Tìm kiếm</button>
+        </form>
+    </div>
+
+    <h2>Danh sách tìm kiếm</h2>
+
+    <div class="table-wrapper">
+        <table id="productTable">
+            <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá thành</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p, i : ${products}">
+                <td th:text="${i.index + 1}"></td>
+                <td th:text="${p.name}"></td>
+                <td th:text="${#numbers.formatDecimal(p.price * 1000, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                <td><a th:href="@{'/product/' + ${p.id}}" class="button">Xem chi tiết</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

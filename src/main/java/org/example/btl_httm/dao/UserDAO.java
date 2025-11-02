@@ -1,10 +1,12 @@
 package org.example.btl_httm.dao;
 
+import org.example.btl_httm.model.RegisterDTO;
 import org.example.btl_httm.model.User;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UserDAO extends DAO{
     public UserDAO() {
@@ -36,4 +38,29 @@ public class UserDAO extends DAO{
         return null;
     }
 
+    public int  register(RegisterDTO registerDTO) {
+        String sql = "INSERT INTO tblUser (username, password, fullname, email, phoneNumber) VALUES (?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, registerDTO.getUsername());
+            ps.setString(2, registerDTO.getPassword());
+            ps.setString(3, registerDTO.getFullname());
+            ps.setString(4, registerDTO.getEmail());
+            ps.setString(5, registerDTO.getPhoneNumber());
+            int affectedRows = ps.executeUpdate();
+
+            if(affectedRows > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if(rs.next()) {
+                    int userId = rs.getInt(1);
+                    return userId;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }
