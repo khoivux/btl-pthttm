@@ -15,7 +15,8 @@ public class CartDetailDAO extends DAO{
         String sql = " INSERT INTO tblCartDetail (quantity, tblProductId, tblCartid) VALUES (?, ?, ?)" +
         " ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, cartDetail.getQuantity());
             ps.setInt(2, cartDetail.getProduct().getId());
             ps.setInt(3, cartDetail.getCartId());
@@ -26,8 +27,21 @@ public class CartDetailDAO extends DAO{
         return false;
     }
 
+    public boolean editCartDetail(CartDetail cartDetail) {
+        String sql = "UPDATE tblCartDetail SET quantity = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, cartDetail.getQuantity());
+            ps.setInt(2, cartDetail.getId());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean deleteCartDetail(List<Integer> idList) {
-        String sqlIds = concatString(idList);
+        String sqlIds = generateIdListSQL(idList);
         String sql = "DELETE FROM tblCartDetail WHERE id in (" + sqlIds + ")";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -43,7 +57,7 @@ public class CartDetailDAO extends DAO{
     }
 
     public List<CartDetail> getByIdList(List<Integer> idList) {
-        String sqlIds = concatString(idList);
+        String sqlIds = generateIdListSQL(idList);
         String sql = "SELECT cd.id AS cartDetailId, cd.quantity, " +
                 " p.id AS productId, p.name, p.price" +
                 " FROM tblCartDetail cd " +
@@ -79,7 +93,7 @@ public class CartDetailDAO extends DAO{
         return null;
     }
 
-    private String concatString (List<Integer> idList) {
+    private String generateIdListSQL (List<Integer> idList) {
         String res = "";
         for (int i = 0; i < idList.size(); i++) {
             res += "?";
