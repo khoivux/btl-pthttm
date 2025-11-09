@@ -1,42 +1,47 @@
 package org.example.btl_httm.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class RecommendRequest {
-    public String user_id;
-    public int top_k;
-    public List<InteractionLog> interaction_history;
+    @JsonProperty("user_id")
+    private String userId;
+
+    @JsonProperty("top_k")
+    private int topK;
+
+    @JsonProperty("interaction_history")
+    private List<InteractionLog> interactionHistory;
     public RecommendRequest() {
     }
-
-    public RecommendRequest(String user_id, int top_k, List<InteractionLog> interaction_history) {
-        this.user_id = user_id;
-        this.top_k = top_k;
-        this.interaction_history = interaction_history;
+    public RecommendRequest(String userId, int topK, List<InteractionLog> interactionHistory) {
+        this.userId = userId;
+        this.topK = topK;
+        this.interactionHistory = interactionHistory;
     }
 
-
-    public int getTop_k() {
-        return top_k;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setTop_k(int top_k) {
-        this.top_k = top_k;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public int getTopK() {
+        return topK;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setTopK(int topK) {
+        this.topK = topK;
     }
 
-    public List<InteractionLog> getInteraction_history() {
-        return interaction_history;
+    public List<InteractionLog> getInteractionHistory() {
+        return interactionHistory;
     }
 
-    public void setInteraction_history(List<InteractionLog> interaction_history) {
-        this.interaction_history = interaction_history;
+    public void setInteractionHistory(List<InteractionLog> interactionHistory) {
+        this.interactionHistory = interactionHistory;
     }
 }

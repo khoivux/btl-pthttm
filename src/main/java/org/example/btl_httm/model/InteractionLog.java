@@ -1,42 +1,62 @@
 package org.example.btl_httm.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class InteractionLog {
-    public String user_id;
-    public String product_id;
-    public String action_type;
-    public String brand;
-    public String category_code;
+    @JsonProperty("user_id")
+    private String userId;
+
+    @JsonProperty("product_id")
+    private String productId;
+
+    @JsonProperty("action_type")
+    private String actionType;
+
+    @JsonProperty("brand")
+    private String brand;
+
+    @JsonProperty("category_code")
+    private String categoryCode;
     public InteractionLog() {
     }
-    public InteractionLog(String user_id, String product_id, String action_type, String brand, String category_code) {
-        this.user_id = user_id;
-        this.product_id = product_id;
-        this.action_type = action_type;
+
+    public InteractionLog(String userId, String productId, String actionType, String brand, String categoryCode) {
+        this.userId = userId;
+        this.productId = productId;
+        this.actionType = actionType;
         this.brand = brand;
-        this.category_code = category_code;
+        this.categoryCode = categoryCode;
     }
 
-    public InteractionLog(String product_id, String action_type, String brand, String category_code) {
-        this.product_id = product_id;
-        this.action_type = action_type;
+    public InteractionLog(String productId, String actionType, String brand, String categoryCode) {
+        this.productId = productId;
+        this.actionType = actionType;
         this.brand = brand;
-        this.category_code = category_code;
+        this.categoryCode = categoryCode;
     }
 
-    public String getProduct_id() {
-        return product_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setProduct_id(String product_id) {
-        this.product_id = product_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getAction() {
-        return action_type;
+    public String getProductId() {
+        return productId;
     }
 
-    public void setAction(String action) {
-        this.action_type = action;
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(String actionType) {
+        this.actionType = actionType;
     }
 
     public String getBrand() {
@@ -47,28 +67,22 @@ public class InteractionLog {
         this.brand = brand;
     }
 
-    public String getCategory_code() {
-        return category_code;
+    public String getCategoryCode() {
+        return categoryCode;
     }
 
-    public void setCategory_code(String category_code) {
-        this.category_code = category_code;
+    public void setCategoryCode(String categoryCode) {
+        this.categoryCode = categoryCode;
     }
 
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
+    @Override
     public String toString() {
         return "InteractionLog{" +
-                "product_id='" + product_id + '\'' +
-                ", action='" + action_type + '\'' +
+                "userId='" + userId + '\'' +
+                ", productId='" + productId + '\'' +
+                ", actionType='" + actionType + '\'' +
                 ", brand='" + brand + '\'' +
-                ", category_code='" + category_code + '\'' +
+                ", categoryCode='" + categoryCode + '\'' +
                 '}';
     }
 }
