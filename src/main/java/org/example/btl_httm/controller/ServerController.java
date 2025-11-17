@@ -39,13 +39,9 @@ public class ServerController {
                 System.out.println(log);
             }
 
-            RecommendRequest recommendRequest = new RecommendRequest(String.valueOf(user.getId()), 10, interactionHistory);
+            RecommendRequest recommendRequest = new RecommendRequest(String.valueOf(user.getId()), 15, interactionHistory);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<RecommendRequest> entity = new HttpEntity<>(recommendRequest, headers);
-
-            Integer[] ids = restTemplate.postForObject(URL, entity, Integer[].class);
+            Integer[] ids = restTemplate.postForObject(URL, recommendRequest, Integer[].class);
             if (ids != null) {
                 System.out.println("Lấy thành công " + ids.length + " sản phẩm gợi ý");
                 recommendProductIds = Arrays.asList(ids);
@@ -236,10 +232,10 @@ public class ServerController {
 
     private void sendLog(InteractionLog log) {
         try {
-            String ipServerML = "26.155.72.159"; // ip máy Kiên
-            String apiUrl = "http://" + ipServerML + ":5000/api/samples";
+            String ipServerML = "26.155.72.159";
+            String URL = "http://" + ipServerML + ":5000/api/samples";
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject(apiUrl, log, Void.class);
+            restTemplate.postForObject(URL, log, Void.class);
             System.out.println("GỬI LOG CHO SERVER ML: " + log);
         } catch (Exception e) {
             e.printStackTrace();

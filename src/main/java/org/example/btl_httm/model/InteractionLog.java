@@ -9,7 +9,7 @@ public class InteractionLog {
     @JsonProperty("product_id")
     private String productId;
 
-    @JsonProperty("action_type")
+    @JsonProperty("action")
     private String actionType;
 
     @JsonProperty("brand")

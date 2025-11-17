@@ -13,6 +13,8 @@ public class RecommendRequest {
 
     @JsonProperty("interaction_history")
     private List<InteractionLog> interactionHistory;
+
+
     public RecommendRequest() {
     }
     public RecommendRequest(String userId, int topK, List<InteractionLog> interactionHistory) {
