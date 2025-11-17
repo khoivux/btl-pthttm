@@ -3,11 +3,12 @@ package org.example.btl_httm.controller;
 import java.time.Instant;
 import java.util.*;
 
-import org.example.btl_httm.dao.CartDAO;
-import org.example.btl_httm.dao.CartDetailDAO;
-import org.example.btl_httm.dao.OrderDAO;
-import org.example.btl_httm.dao.ProductDAO;
+import org.example.btl_httm.dao.*;
+import org.example.btl_httm.exception.OutOfStockException;
 import org.example.btl_httm.model.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,25 +23,34 @@ public class ServerController {
 
     @GetMapping("/recommend-list")
     public String showRecommendList(HttpSession session, Model model) {
-        List<Integer> recommendIdList = new ArrayList<>();
+        List<Integer> recommendProductIds = new ArrayList<>();
         User user = (User) session.getAttribute("user");
 
         try {
-            String ipServerML = "26.155.72.159";
             RestTemplate restTemplate = new RestTemplate();
-            String apiUrl = "http://" + ipServerML + ":5000/api/recommend/" + user.getId();
-            Integer[] ids = restTemplate.getForObject(apiUrl, Integer[].class);
-            if (ids != null) {
-                System.out.println("Lấy thành công " + ids.length + " sản phẩm gợi ý");
-                recommendIdList = Arrays.asList(ids);
+            String URL = "http://26.155.72.159:5000/api/recommend";
+
+            OrderDetailDAO orderDetailDAO = new OrderDetailDAO();
+            List<OrderDetail> lastOrderDetails = orderDetailDAO.getLastOrderDetailsByUserId(user.getId(), 5);
+            List<InteractionLog> interactionHistory = new ArrayList<>();
+            for (OrderDetail od : lastOrderDetails) {
+                InteractionLog log = new InteractionLog(String.valueOf(od.getProduct().getId()), "purchase", od.getProduct().getBrand(), od.getProduct().getCategoryCode());
+                interactionHistory.add(log);
+                System.out.println(log);
             }
 
+            RecommendRequest recommendRequest = new RecommendRequest(String.valueOf(user.getId()), 15, interactionHistory);
+
+            Integer[] ids = restTemplate.postForObject(URL, recommendRequest, Integer[].class);
+            if (ids != null) {
+                System.out.println("Lấy thành công " + ids.length + " sản phẩm gợi ý");
+                recommendProductIds = Arrays.asList(ids);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         ProductDAO productDAO = new ProductDAO();
-        List<Product> recommendList = productDAO.getProductsByIdList(recommendIdList);
+        List<Product> recommendList = productDAO.getProductsByIdList(recommendProductIds);
         model.addAttribute("products", recommendList);
         model.addAttribute("user", user);
         return "recommendView";
@@ -67,7 +77,7 @@ public class ServerController {
         model.addAttribute("product", selectedProduct);
         model.addAttribute("user", user);
 
-        sendLog(user.getId(), selectedProduct.getId(), "view");
+        sendLog(new InteractionLog(user.getId() + "", productId + "", "view", selectedProduct.getBrand(), selectedProduct.getCategoryCode()));
         return "productDetailView";
     }
 
@@ -95,8 +105,13 @@ public class ServerController {
         order.setUser(user);
 
         OrderDAO orderDAO = new OrderDAO();
-        orderDAO.insertOrder(order);
-        sendLog(user.getId(), product.getId(), "purchase");
+        try {
+            orderDAO.insertOrder(order);
+        } catch (OutOfStockException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            return "redirect:/product/" + product.getId();
+        }
+        sendLog(new InteractionLog(user.getId() + "", product.getId() + "", "purchase", product.getBrand(), product.getCategoryCode()));
         redirectAttributes.addFlashAttribute("message", "Mua hàng thành công!");
         return "redirect:/product/" + product.getId();
     }
@@ -118,7 +133,7 @@ public class ServerController {
 
         CartDetailDAO cartDetailDAO = new CartDetailDAO();
         cartDetailDAO.addOrUpdateCartDetail(cartDetail);
-        sendLog(user.getId(), product.getId(), "cart");
+        sendLog(new InteractionLog(user.getId() + "", product.getId() + "", "cart", product.getBrand(), product.getCategoryCode()));
         redirectAttributes.addFlashAttribute("message", "Thêm giỏ hàng thành công!");
         return "redirect:/product/" + product.getId();
     }
@@ -149,11 +164,26 @@ public class ServerController {
         List<CartDetail> selectedDetailList = cartDetailDAO.getByIdList(selectedItemIds);
         cartDetailDAO.deleteCartDetail(selectedItemIds);
         for (CartDetail cd : selectedDetailList) {
-            sendLog(user.getId(), cd.getProduct().getId(), "remove_from_cart");
+            sendLog(new InteractionLog());
         }
 
         return "redirect:/cart";
     }
+
+    @PostMapping("/cart/edit")
+    public String editCartDetail(
+            @RequestParam("cartDetailId") int cartDetailId,
+            @RequestParam("quantity") int quantity) {
+
+       CartDetailDAO cartDetailDAO = new CartDetailDAO();
+        CartDetail cartDetail = new CartDetail();
+        cartDetail.setId(cartDetailId);
+        cartDetail.setQuantity(quantity);
+
+        cartDetailDAO.editCartDetail(cartDetail);
+        return "redirect:/cart";
+    }
+
 
     @PostMapping("/cart/checkout")
     public String checkout( HttpSession session,
@@ -180,10 +210,18 @@ public class ServerController {
         order.setOrderDetailList(orderDetailList);
 
         OrderDAO orderDAO = new OrderDAO();
-        orderDAO.insertOrder(order);
+
+        try {
+            orderDAO.insertOrder(order);
+        } catch (OutOfStockException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            return "redirect:/cart";
+        }
+
 
         for(CartDetail cd : selectedDetailList) {
-            sendLog(user.getId(), cd.getProduct().getId(), "purchase");
+            Product product = cd.getProduct();
+            sendLog(new InteractionLog(user.getId() + "", product.getId() + "", "purchase", product.getBrand(), product.getCategoryCode()));
         }
 
         cartDetailDAO.deleteCartDetail(selectedItemIds);
@@ -192,21 +230,15 @@ public class ServerController {
     }
 
 
-    private void sendLog(int userId, int productId, String actionType) {
+    private void sendLog(InteractionLog log) {
         try {
-//            String ipServerML = "26.155.72.159"; // ip máy Kiên
-//            RestTemplate restTemplate = new RestTemplate();
-//            String apiUrl = "http://" + ipServerML + ":5000/api/samples";
-//
-//            Map<String, Object> requestBody = new HashMap<>();
-//            requestBody.put("userId", userId);
-//            requestBody.put("productId", productId);
-//            requestBody.put("actionType", actionType);
-//
-//            restTemplate.postForObject(apiUrl, requestBody, Void.class);
-            System.out.println("GỬI LOG CHO SERVER ML: " + "userId: " + userId + ", productId: " + productId + ", actionType: " + actionType);
+            String ipServerML = "26.155.72.159";
+            String URL = "http://" + ipServerML + ":5000/api/samples";
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.postForObject(URL, log, Void.class);
+            System.out.println("GỬI LOG CHO SERVER ML: " + log);
         } catch (Exception e) {
-            System.out.println("Gửi log thất bại: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

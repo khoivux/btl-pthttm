@@ -58,7 +58,7 @@ public class ProductDAO extends DAO{
     }
     public Product getById(int id) {
 
-        String sql = "SELECT id, brand, name, price, des, quantity FROM tblProduct WHERE id = ?";
+        String sql = "SELECT id, brand, name, price, des, categorycode, quantity FROM tblProduct WHERE id = ?";
 
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -73,6 +73,7 @@ public class ProductDAO extends DAO{
                 p.setPrice(rs.getFloat("price"));
                 p.setDes(rs.getString("des"));
                 p.setQuantity(rs.getInt("quantity"));
+                p.setCategoryCode(rs.getString("categorycode"));
                 return p;
             }
         } catch (SQLException e) {

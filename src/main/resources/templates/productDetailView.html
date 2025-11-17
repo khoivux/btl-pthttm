@@ -141,19 +141,19 @@
         document.getElementById("cartQuantity").value = q;
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const quantityInput = document.getElementById("quantity");
-        const maxQuantity = parseInt(quantityInput.getAttribute("max"));
-
-        quantityInput.addEventListener("input", function() {
-            if (parseInt(this.value) > maxQuantity) {
-                this.value = maxQuantity;
-            }
-            if (parseInt(this.value) < 1) {
-                this.value = 1;
-            }
-        });
-    });
+//    document.addEventListener("DOMContentLoaded", function() {
+//        const quantityInput = document.getElementById("quantity");
+//        const maxQuantity = parseInt(quantityInput.getAttribute("max"));
+//
+//        quantityInput.addEventListener("input", function() {
+//            if (parseInt(this.value) > maxQuantity) {
+//                this.value = maxQuantity;
+//            }
+//            if (parseInt(this.value) < 1) {
+//                this.value = 1;
+//            }
+//        });
+//    });
 </script>
 
 <p id="message" th:text="${message}" hidden></p>

@@ -7,12 +7,21 @@ public class Product {
     private String des;
     private String brand;
     private int quantity;
+    private String CategoryCode;
     public Product() {}
 
     public Product(int id, String name, float price) {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public String getCategoryCode() {
+        return CategoryCode;
+    }
+
+    public void setCategoryCode(String categoryCode) {
+        CategoryCode = categoryCode;
     }
 
     public int getId() { return id; }
